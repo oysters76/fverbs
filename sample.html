@@ -1,0 +1,239 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, inital-scale=1.0">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+		<style>
+			*{
+				font-family:Roboto;
+			}
+	             	table{
+			  width: 100%;
+  			  text-align: center;
+  			  font-weight: bold;
+  			  margin-top: calc(100% - 80%);
+                          border-spacing: 50px;
+                          border: 20px;
+  			  border-collapse: collapse;
+                          height: 40%;
+                          font-size: 150%;
+		        }
+			tr{
+			  border:2px solid black;
+			}
+			td{
+ 			  border:2px solid black;
+			}
+			.input-field{
+				font-size:20px;
+			}
+			.normal-text{
+			  border:2px solid blue;
+			  font-size:15px;
+			  text-align:center;
+			}
+			.error-text{
+			  border:2px solid red; 
+			  font-size:15px; 
+			  text-align:center;
+			}
+			h3{
+			  text-align:center;
+			  width:100%; 
+			  padding-bottom:10px;
+			}
+			h5{
+			  text-align:center; 
+			  width:100%;
+			  font-size:25px;
+			  background:green;
+			  color:white;
+			}
+			.btn{
+			 	position:absolute;
+				background:green; 
+				color:white;
+				padding:20px;
+				top: calc(100% - 150px);
+				font-size:40px;
+				font-weight:bold;
+				border-radius:20px;
+				text-transform:uppercase;
+				left: calc(50% - 80px);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h3 id="titleLbl">Present Tense - Etre</h3>
+			<h5 id="lifePointsLbl">Life points: 100%</h5>
+			<table id="verbTable">
+			 
+			</table>
+			<button class="btn" style="position:absolute" onclick="performAction(event)">Next!</button>
+		</div>
+		<script>
+
+
+			function create_verb_arr(title, article_strs, verb_strs)
+			{
+			 let verbs = []; 
+			 for (let i = 0; i < article_strs.length; i++)
+			  {
+			 	verbs.push(create_verb(article_strs[i], verb_strs[i]));
+			  }
+			  return {
+			     title:title, 
+			     verbs:verbs
+			  };
+			}
+
+			const ARTICLE_STRS = ["je/j'", "tu", "il", "nous", "vous", "ils"];
+		
+			const test1 = create_verb_arr("Etre", ARTICLE_STRS, 
+				["suis", "es", "est", "sommes", "etes", "sont"]);
+        		const test2 = create_verb_arr("Etre2", ARTICLE_STRS, 
+				["tuis", "tes", "test", "stommes", "etets", "sttont"]);
+	         	const test3 = create_verb_arr("Etre", ARTICLE_STRS, 
+				["suisv", "ves", "estv", "sovvmes", "vvtes", "vont"]);
+ 			
+			let page_ind = 0; 
+			let life_points = 100; 
+
+			const pages = [test1, test2, test3]; 
+
+			function create_verb(pronoun, conj)
+			{
+				return {"pronoun": pronoun, "conj":conj};
+			}
+
+			function create_rand_elem(id, val, prob){
+				let r = Math.random() * 10; 
+				let renderFunc = (r >= prob) ? create_textbox : create_td; 
+				return renderFunc(id, val); 
+			}
+
+			function create_td(id, val){
+				let d = document.createElement("td");
+				d.id = id; 
+				d.innerHTML = val; 
+				return d; 
+			}
+
+			function create_textbox(id, val){
+				let td = create_td(id, ""); 
+				
+				let d = document.createElement("input"); 
+				d.classList.add("normal-text");
+				d.classList.add("input-field");
+				d.id = id;
+
+				td.appendChild(d); 
+				return td;
+			}
+
+			function new_question(title, verbTable, verbs)
+			{	
+				titleLbl.innerHTML = "Present Tense - " + title;	
+				verbTable.innerHTML = "";
+			        for (let i = 0; i < verbs.length; i++)
+				{
+					const row = document.createElement("tr");
+					row.dataset["row"] = i; 
+					const col1 = document.createElement("td"); 
+					const col2 = create_rand_elem(
+						"row_"+i, verbs[i].conj, 5); 
+					col1.innerHTML = verbs[i].pronoun; 
+					row.appendChild(col1); 
+					row.appendChild(col2); 
+					verbTable.appendChild(row);
+				}
+
+			}
+			
+			function show_next_page()
+			{
+			  page_ind += 1; 
+			  if (page_ind >= pages.length)
+			    return; 
+			  let p = pages[page_ind]; 
+			  new_question(p.title, verbTable, p.verbs);
+			}
+
+			window.onload = function(event)
+			{
+			    let p = pages[page_ind]; 
+			    new_question(p.title, verbTable, p.verbs);
+			}
+			
+			function check_if_valid(ind, val, verb_arr)
+			{
+			  let expected = verb_arr[ind].conj; 
+			  let actual = val;
+			  return actual == expected; 
+			}
+			
+			function toggle_class(el, class_to_rem, class_to_add)
+			{
+				el.classList.add(class_to_add); 
+				el.classList.remove(class_to_rem);
+			}
+
+			function replace_into_td(el, val)
+			{
+			  el.parentElement.innerHTML = val; 
+			}
+
+			function get_row_ind(el)
+			{
+			 return parseInt(el.parentElement.parentElement.dataset["row"]);
+			}
+
+			function get_color_based_on_lifepoint_score(lp)
+			{
+			   if(lp >= 80)
+				return "green"; 
+			   if (lp >= 60)
+				return "#4d4d"; 
+			   if (lp >= 40)
+				return "#eee"; 
+			   if (lp >= 20)
+				return "#faa"; 
+			   return "red"; 
+			}
+
+			function apply_penalty(el, score_reduct)
+			{
+			  life_points -= score_reduct;
+			  el.innerHTML = "Life points: " + life_points; 
+			  el.style.background = get_color_based_on_lifepoint_score(life_points);
+			  
+			}
+
+			function performAction(event)
+			{
+			 let elems = document.querySelectorAll(".input-field");
+			 if (elems == null || elems.length == 0)
+			  {
+				show_next_page();
+  				return;
+			  }				
+			 for (let i = 0; i < elems.length; i++)
+			  {
+ 				let is_valid = check_if_valid(
+						get_row_ind(elems[i]), elems[i].value.trim(), pages[page_ind].verbs);	
+   			  	if (!is_valid)
+				 { 
+				    toggle_class(elems[i], "normal-text", "error-text"); 
+			            apply_penalty(lifePointsLbl, 5);
+			         }
+				 else
+				  replace_into_td(elems[i], elems[i].value); 
+			  }
+			}
+
+
+		</script>
+	</body>
+</html>

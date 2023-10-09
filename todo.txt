@@ -1,0 +1,14 @@
+1. get all data to one js file 
+2. get all constants to one js file 
+3. make create_rand_elem more abstract
+	function create_rand_elem(id, val, prob, func1, func2) 
+4. colors should be in seperate :root 
+5. strings should be constants, easily changed 
+6. player needs an object with name, page_ind, life_points & score 
+7. player object should be stored in localStorage 
+8. prompt for username on page load 
+9. lifepoint conditions & colors should be configurable 
+10.Add sound effect for loss of lifepoints
+11.Add sound effect for moving to next page successfully
+12.Add a congrats for final page, and score should be displayed 
+13. Score should be calculated by amount of time spent, lesser the time, the better
